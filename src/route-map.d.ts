@@ -124,9 +124,9 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/posts/hello': RouteRecordInfo<
-      '/posts/hello',
-      '/posts/hello',
+    '/posts/2026-04-29-blog-opi-ai-studio-windows': RouteRecordInfo<
+      '/posts/2026-04-29-blog-opi-ai-studio-windows',
+      '/posts/2026-04-29-blog-opi-ai-studio-windows',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -235,9 +235,9 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
-    'src/pages/posts/hello.md': {
+    'src/pages/posts/2026-04-29-blog-opi-ai-studio-windows.md': {
       routes:
-        | '/posts/hello'
+        | '/posts/2026-04-29-blog-opi-ai-studio-windows'
       views:
         | never
     }
