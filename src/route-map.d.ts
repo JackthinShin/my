@@ -61,6 +61,13 @@ declare module 'vue-router/auto-routes' {
       { name: ParamValue<false> },
       | never
     >,
+    '/posts/1': RouteRecordInfo<
+      '/posts/1',
+      '/posts/1',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/posts/2025-11-28-blog-quote': RouteRecordInfo<
       '/posts/2025-11-28-blog-quote',
       '/posts/2025-11-28-blog-quote',
@@ -131,6 +138,20 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/posts/2026-05-01-blog-opi-ai-studio-ubuntu': RouteRecordInfo<
+      '/posts/2026-05-01-blog-opi-ai-studio-ubuntu',
+      '/posts/2026-05-01-blog-opi-ai-studio-ubuntu',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/posts/2026-05-02-blog-win-ubuntu-dual-boot-no-usb': RouteRecordInfo<
+      '/posts/2026-05-02-blog-win-ubuntu-dual-boot-no-usb',
+      '/posts/2026-05-02-blog-win-ubuntu-dual-boot-no-usb',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/README': RouteRecordInfo<
       '/README',
       '/README',
@@ -178,6 +199,12 @@ declare module 'vue-router/auto-routes' {
     'src/pages/hi/[name].vue': {
       routes:
         | '/hi/[name]'
+      views:
+        | never
+    }
+    'src/pages/posts/1.md': {
+      routes:
+        | '/posts/1'
       views:
         | never
     }
@@ -238,6 +265,18 @@ declare module 'vue-router/auto-routes' {
     'src/pages/posts/2026-04-29-blog-opi-ai-studio-windows.md': {
       routes:
         | '/posts/2026-04-29-blog-opi-ai-studio-windows'
+      views:
+        | never
+    }
+    'src/pages/posts/2026-05-01-blog-opi-ai-studio-ubuntu.md': {
+      routes:
+        | '/posts/2026-05-01-blog-opi-ai-studio-ubuntu'
+      views:
+        | never
+    }
+    'src/pages/posts/2026-05-02-blog-win-ubuntu-dual-boot-no-usb.md': {
+      routes:
+        | '/posts/2026-05-02-blog-win-ubuntu-dual-boot-no-usb'
       views:
         | never
     }
