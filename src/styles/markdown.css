@@ -6,20 +6,81 @@
   font-family: 'DM Mono', monospace;
   font-size: 1.2em;
   line-height: 1.4;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #e6e9ef;
 }
 
 .prose img {
   width: 100%;
 }
 
-.shiki,
-.shiki span {
-  color: var(--shiki-light);
-  background: var(--shiki-light-bg);
+/* 正文字色：亮/暗模式分别覆盖，保证暗色模式下可读 */
+.prose {
+  color: #374151; /* gray-700 */
 }
 
-html.dark .shiki,
+html.dark .prose {
+  color: #d1d5db; /* slightly off-white for readability */
+}
+
+/* Increase readable line length on desktop: widen prose container */
+@media (min-width: 1024px) {
+  .prose {
+    max-width: 1100px;
+  }
+}
+
+/* 代码块：外层负责背景，内层 token 只负责前景色（不携带背景），避免出现 token 方块 */
+.shiki {
+  background-color: #ffffff; /* light mode: white background */
+}
+
+.shiki span {
+  color: var(--shiki-light);
+  background-color: transparent;
+}
+
+html.dark .shiki {
+  background-color: var(--shiki-dark-bg);
+  border-color: #334155;
+}
+
 html.dark .shiki span {
   color: var(--shiki-dark);
-  background: var(--shiki-dark-bg);
+  background-color: transparent;
+}
+
+/* 暗色模式下：增强标题、引用、链接等的前景色，保证可读性 */
+html.dark .prose h1,
+html.dark .prose h2,
+html.dark .prose h3,
+html.dark .prose h4,
+html.dark .prose h5,
+html.dark .prose h6 {
+  color: #f8fafc; /* near-white for headings */
+}
+
+html.dark .prose a {
+  color: #93c5fd; /* sky-400 for links in dark */
+}
+
+html.dark .prose blockquote {
+  color: #d1d5db; /* lighter text for blockquote */
+  border-left-color: #334155;
+}
+
+html.dark .prose li {
+  color: #d1d5db;
+}
+
+html.dark .prose strong,
+html.dark .prose b {
+  color: #f8fafc;
+}
+
+/* inline code in dark mode: make it slightly lighter and keep transparent background */
+html.dark .prose code {
+  color: #f1f5f9;
+  background-color: transparent;
 }

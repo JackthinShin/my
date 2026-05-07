@@ -12,7 +12,7 @@ const posts = Object.entries(postModules).map(([path, mod]: any) => ({
 </script>
 
 <template>
-  <div class="max-w-2xl mx-auto px-6 py-16">
+  <div class="max-w-4xl mx-auto px-6 py-16">
     <h1 class="text-3xl font-bold mb-10">Blog</h1>
     <div v-if="posts.length === 0" class="text-gray-400">
       还没有文章，快去写第一篇吧！

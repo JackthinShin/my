@@ -194,24 +194,36 @@ sudo -i
 ### 2) 拉取 MindIE 镜像
 
 ```bash
-docker pull --platform=amd64 \
-    swr.cn-south-1.myhuaweicloud.com/ascendhub/mindie:3.0.0b2-300l-Duo-py311-openeuler24.03-lts
-docker images
+docker pull --platform=amd64 swr.cn-south-1.myhuaweicloud.com/ascendhub/mindie:3.0.0-300I-Duo-py311-openeuler24.03-lts
 ```
 
-![MindIE 镜像下载入口示意](/images/opi-ai-studio-ubuntu/mindie-image-source.png)
+![MindIE 镜像下载入口示意1](/images/opi-ai-studio-ubuntu/mindie-image1.png)
+
+![MindIE 镜像下载入口示意2](/images/opi-ai-studio-ubuntu/mindie-image2.png)
+
+![MindIE 镜像下载入口示意3](/images/opi-ai-studio-ubuntu/mindie-image3.png)
+
+![MindIE 镜像下载入口示意4](/images/opi-ai-studio-ubuntu/mindie-image4.png)
 
 ![拉取 MindIE 镜像](/images/opi-ai-studio-ubuntu/pull-mindie-image.png)
+
+查看本地镜像列表：
+```bash
+docker images
+```
 
 ![查看本地镜像](/images/opi-ai-studio-ubuntu/docker-images-list.png)
 
 ### 3) 编写并执行容器启动脚本
 
-新建 `start_docker.sh`（图片中存在拼写与空格问题）：
+```bash
+vim start_docker.sh
+```
+
+新建 `start_docker.sh`：
+输入以下内容
 
 ```bash
-#!/usr/bin/env bash
-
 IMAGE_ID=$1
 NAME=${2:-mindie}
 
@@ -265,13 +277,21 @@ sudo apt install -y git-lfs
 
 ![安装 git-lfs](/images/opi-ai-studio-ubuntu/install-git-lfs.png)
 
+切换至/models目录：
+
+```bash
+cd /models
+```
+
 模型地址：<https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Qwen-14B>
 
 国内网络建议使用镜像：
 
 ```bash
-git clone https://hf-mirror.com/deepseek-ai/DeepSeek-R1-Distill-Qwen-14B
+git clone --depth=1 https://modelers.cn/XLRJ/DeepSeek-R1-Distill-Qwen-14B
 ```
+
+![模型下载](/images/opi-ai-studio-ubuntu/model-download.png)
 
 下载过程较长，可在模型目录观察大小变化：
 
@@ -279,7 +299,15 @@ git clone https://hf-mirror.com/deepseek-ai/DeepSeek-R1-Distill-Qwen-14B
 du -sh
 ```
 
-![模型下载进度观察](/images/opi-ai-studio-ubuntu/model-download-progress.png)
+![模型下载进度观察](/images/opi-ai-studio-ubuntu/model-download-percentage.png)
+
+当然也可以通过watch命令持续监控：
+
+```bash
+watch -n 1 du -sh
+```
+
+![watch 监控模型下载](/images/opi-ai-studio-ubuntu/percentage-watch.png)
 
 ## 八、后续待实操（详细推进版，保留并扩充）
 
@@ -290,7 +318,7 @@ du -sh
 进入模型目录：
 
 ```bash
-cd DeepSeek-R1-Distill-Qwen-14B/
+cd /models/DeepSeek-R1-Distill-Qwen-14B/
 ```
 
 编辑配置文件：
@@ -299,7 +327,7 @@ cd DeepSeek-R1-Distill-Qwen-14B/
 vim config.json
 ```
 
-确认或修改为：
+确认或修改torch_dtype为：
 
 ```json
 "torch_dtype": "float16"
@@ -348,9 +376,7 @@ cd atb-models/
 执行推理命令：
 
 ```bash
-torchrun --nproc_per_node 1 --master_port 20037 -m examples.run_pa \
-    --model_path /models/DeepSeek-R1-Distill-Qwen-14B/ \
-    --max_output_length 256
+torchrun --nproc_per_node 1 --master_port 20037 -m examples.run_pa --model_path /models/DeepSeek-R1-Distill-Qwen-14B/ --max_output_length 256
 ```
 
 常见检查点：
