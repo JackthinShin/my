@@ -61,13 +61,6 @@ declare module 'vue-router/auto-routes' {
       { name: ParamValue<false> },
       | never
     >,
-    '/posts/1': RouteRecordInfo<
-      '/posts/1',
-      '/posts/1',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
     '/posts/2025-11-28-blog-quote': RouteRecordInfo<
       '/posts/2025-11-28-blog-quote',
       '/posts/2025-11-28-blog-quote',
@@ -199,12 +192,6 @@ declare module 'vue-router/auto-routes' {
     'src/pages/hi/[name].vue': {
       routes:
         | '/hi/[name]'
-      views:
-        | never
-    }
-    'src/pages/posts/1.md': {
-      routes:
-        | '/posts/1'
       views:
         | never
     }

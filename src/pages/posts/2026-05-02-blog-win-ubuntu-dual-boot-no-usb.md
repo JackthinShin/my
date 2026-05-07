@@ -12,6 +12,8 @@ tags:
   - UEFI
 ---
 
+# Windows 环境下无 U 盘安装 Ubuntu 双系统教程
+
 这篇文章记录一种在 Windows 已安装、又手头没有 U 盘时的 Ubuntu 双系统安装方法。核心思路是：从硬盘里划出一小块 FAT32 分区，临时充当启动介质，再通过 EasyUEFI 手动添加 Ubuntu 启动项。
 
 > 提醒：分区操作有风险，开始前先备份重要数据。
@@ -83,12 +85,3 @@ tags:
 安装完成后，重启电脑会看到 GRUB 引导界面，可以选择进入 Ubuntu 或 Windows Boot Manager。
 
 如果你希望默认直接进入 Windows，也可以在 BIOS 里把 Windows Boot Manager 调回第一启动项。
-
-## 总结
-
-这套方法的关键点只有两个：
-
-- 用 FAT32 分区替代 U 盘，手动提供 Ubuntu 启动文件。
-- 在 Ubuntu 安装时正确创建根分区 `/`，文件系统使用 `ext4`。
-
-只要这两步没出问题，Windows + Ubuntu 双系统就能顺利装好。

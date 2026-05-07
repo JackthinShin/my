@@ -25,8 +25,9 @@
     <!-- 简介 -->
     <div class="py-8">
       <p class="text-sm text-gray-600 dark:text-gray-400 leading-loose m-0">
-        你好，我是 Jackthin，就读于中国海洋大学计算机科学专业（大一），在计算机视觉实验室参与科研工作。
-        对图像处理、深度学习和摄影都有浓厚兴趣，希望把技术和视觉创作结合起来。
+        你好，我是 Jackthin，就读于中国海洋大学计算机类专业（大一）。
+        目前正在 中国海洋大学视觉实验室 CVLab 参与科研学习。
+        对摄影、图像处理、深度学习等有着浓厚兴趣。
       </p>
     </div>
 
@@ -78,15 +79,15 @@
             <span class="text-sm font-medium text-gray-800 dark:text-gray-200">Photoflife</span>
             <span class="text-xs text-gray-400">摄影</span>
           </div>
-          <p class="text-xs text-gray-500 dark:text-gray-400 m-0 leading-relaxed">个人摄影作品集，Sony A7C2 拍摄，Cloudinary 托管，Vercel 部署。</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 m-0 leading-relaxed">个人摄影作品集，GitHub+Vercel，Cloudinary 托管。</p>
         </a>
 
         <div class="p-4 border border-gray-100 dark:border-gray-800 rounded-xl">
           <div class="flex justify-between items-center mb-1.5">
-            <span class="text-sm font-medium text-gray-800 dark:text-gray-200">UAV 海岸监测系统</span>
-            <span class="text-xs text-gray-400">CV · 研究</span>
+            <span class="text-sm font-medium text-gray-800 dark:text-gray-200">华为众智项目</span>
+            <span class="text-xs text-gray-400">研究</span>
           </div>
-          <p class="text-xs text-gray-500 dark:text-gray-400 m-0 leading-relaxed">基于无人机的海岸线图像采集与处理，研究中。</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 m-0 leading-relaxed">华为昇腾众智项目：CATLASS 基于910B平台的算子开发，研究中。</p>
         </div>
 
         <div class="p-4 border border-gray-100 dark:border-gray-800 rounded-xl">
