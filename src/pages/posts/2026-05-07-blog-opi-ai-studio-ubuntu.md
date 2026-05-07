@@ -1,6 +1,6 @@
 ---
-title: "OPi AI Studio 配置记录 - Ubuntu（310P 驱动 + MindIE）"
-date: 2026-05-01
+title: "OPi AI Studio 配置记录 - Ubuntu（310P 驱动 + MindIE + Daemon + curl 调用接口）"
+date: 2026-05-07
 draft: false
 categories:
     - Blog
@@ -12,15 +12,13 @@ tags:
     - 310P
 ---
 
-# OPi AI Studio 配置记录 - Ubuntu（310P 驱动 + MindIE）
+# OPi AI Studio 配置记录 - Ubuntu（310P 驱动 + MindIE + Daemon + curl 调用接口）
 
-上一篇我在 Windows 下完成了 OPi AI Studio 的基础配置，但遇到了影响使用的报错。因此这次切到 Ubuntu 22.04 + Linux 5.15，重新整理一套可复现的部署流程。
+上一篇在 Windows 下完成了 OPi AI Studio 的基础配置，但遇到了影响使用的报错。因此这次切到 Ubuntu 22.04 + Linux 5.15，重新整理一套可复现的部署流程。
 
 ## 一、目标环境与下载准备
 
 310P NPU 驱动包当前适配的推荐系统为 Ubuntu 22.04，内核版本为 Linux 5.15。
-
-这一步的核心目标是先把“系统版本边界”定死，避免后续出现驱动可安装但运行不稳定的问题。实践里最常见的问题就是系统版本正确、但内核版本偏差导致设备侧异常。
 
 Ubuntu 镜像（`ubuntu-22.04.5-desktop-amd64.iso`）可从以下地址下载：
 
@@ -70,7 +68,7 @@ sudo vim /etc/default/grub
 ```text
 GRUB_DEFAULT="Advanced options for Ubuntu>Ubuntu, with Linux 5.15.0-126-generic"
 ```
-
+如果推理期间 NPU 利用率和显存占用有明显变化，说明任务已正确落到设备侧。加载进度跑到 100% 后，通常就会继续进入模型推理阶段：
 ![修改 GRUB 默认项](/images/opi-ai-studio-ubuntu/edit-grub-default.png)
 
 更新并重启：
@@ -291,6 +289,8 @@ cd /models
 git clone --depth=1 https://modelers.cn/XLRJ/DeepSeek-R1-Distill-Qwen-14B
 ```
 
+![模型下载完成](/images/opi-ai-studio-ubuntu/model-download-complete.png)
+
 ![模型下载](/images/opi-ai-studio-ubuntu/model-download.png)
 
 下载过程较长，可在模型目录观察大小变化：
@@ -309,9 +309,9 @@ watch -n 1 du -sh
 
 ![watch 监控模型下载](/images/opi-ai-studio-ubuntu/percentage-watch.png)
 
-## 八、后续待实操（详细推进版，保留并扩充）
+## 八、模型配置、推理验证与服务启动
 
-下面这部分保留你原本的推进思路，并展开成可直接照做的逐步流程。为了后续回溯，建议每一小步都截图并记录输出。
+下面把后续实操整理成一条更顺的链路：先把模型配置和权限处理好，再做一次本地推理验证，最后启动 MindIE 服务并用 `curl` 复核接口。
 
 ### 1) 模型配置调整（float16）
 
@@ -327,17 +327,21 @@ cd /models/DeepSeek-R1-Distill-Qwen-14B/
 vim config.json
 ```
 
-确认或修改torch_dtype为：
+确认或修改 `torch_dtype` 为：
 
 ```json
 "torch_dtype": "float16"
 ```
+
+![修改 torch_dtype](/images/opi-ai-studio-ubuntu/modify-torch-dtype.png)
 
 建议执行一次快速校验，确保 JSON 结构未被破坏：
 
 ```bash
 python3 -m json.tool config.json >/dev/null && echo "config.json is valid"
 ```
+
+![验证 JSON 合法性](/images/opi-ai-studio-ubuntu/validate-json.png)
 
 ### 2) 调整模型权限与所有者
 
@@ -346,19 +350,19 @@ python3 -m json.tool config.json >/dev/null && echo "config.json is valid"
 ```bash
 sudo chmod 640 config.json
 cd ..
-sudo chown -R root:root DeepSeek-R1-Distill-Qwen-14B/
+sudo chown -R root:root /models/DeepSeek-R1-Distill-Qwen-14B/
 ```
 
 校验权限：
 
 ```bash
-ls -l DeepSeek-R1-Distill-Qwen-14B/config.json
-ls -ld DeepSeek-R1-Distill-Qwen-14B
+ls -l /models/DeepSeek-R1-Distill-Qwen-14B/config.json
+ls -ld /models/DeepSeek-R1-Distill-Qwen-14B
 ```
 
 目标是保证配置文件权限收敛、目录所有者统一，减少容器内运行时的权限歧义。
 
-### 3) 进入容器并执行 ATB 推理
+### 3) 进入容器并执行一次本地推理
 
 启动并进入容器（`NAME` 为你自定义的容器名）：
 
@@ -367,23 +371,24 @@ docker start NAME
 docker exec -it NAME bash
 ```
 
+![启动并进入 Docker](/images/opi-ai-studio-ubuntu/start-and-enter-docker.png)
+
 进入工作目录：
 
 ```bash
 cd atb-models/
 ```
 
-执行推理命令：
+先执行环境变量配置：
+```bash
+export MINDIE_LOG_TO_STDOUT=1
+```
+
+再执行推理命令：
 
 ```bash
 torchrun --nproc_per_node 1 --master_port 20037 -m examples.run_pa --model_path /models/DeepSeek-R1-Distill-Qwen-14B/ --max_output_length 256
 ```
-
-常见检查点：
-
-1. 若启动即退出，先检查模型路径是否在容器内可见。
-2. 若报端口占用，替换 `--master_port` 为其他空闲端口。
-3. 若报权限问题，回到上一步重新核对 `chown/chmod`。
 
 另开一个终端观察 NPU 使用情况：
 
@@ -391,7 +396,15 @@ torchrun --nproc_per_node 1 --master_port 20037 -m examples.run_pa --model_path 
 watch -n 0.2 npu-smi info
 ```
 
-如果推理期间 NPU 利用率和显存占用有明显变化，说明任务已正确落到设备侧。
+![npu-smi 使用情况](/images/opi-ai-studio-ubuntu/npu-smi-usage.png)
+
+如果推理期间 NPU 利用率和显存占用有明显变化，说明任务已正确落到设备侧。加载进度跑到 100% 后，通常就会继续进入模型推理阶段：
+
+![样例推理成功](/images/opi-ai-studio-ubuntu/run-pa-example-success.png)
+
+Tips: 注意！如果不进行**环境变量配置**，执行推理命令时将会加载至100%后直接异常退出：
+
+![推理加载异常跳出](/images/opi-ai-studio-ubuntu/run-pa-loading-complete.png)
 
 ### 4) 启动 mindie-service（服务化）
 
@@ -412,8 +425,15 @@ vim conf/config.json
 ```json
 "httpsEnabled": false,
 "npuDeviceIds": [[0]],
-"worldSize": 1
+"worldSize": 1,
+"modelWeightPath": "/models/DeepSeek-R1-Distill-Qwen-14B/"
 ```
+
+![mindie-service 配置 1](/images/opi-ai-studio-ubuntu/mindie-service-config-1.png)
+
+![mindie-service 配置 2](/images/opi-ai-studio-ubuntu/mindie-service-config-2.png)
+
+![mindie-service 配置 3](/images/opi-ai-studio-ubuntu/mindie-service-config-3.png)
 
 启动服务：
 
@@ -421,55 +441,72 @@ vim conf/config.json
 ./mindieservice_daemon
 ```
 
-建议补充检查：
+报错：
 
 ```bash
-ps -ef | grep -i mindie
-ss -lntp | grep -E "(mindie|8080|8000|9000)"
+./mindieservice_daemon: error while loading shared libraries: libtorch_cpu.so: cannot open shared object file: No such file or directory
 ```
 
-端口号以你实际配置为准，核心目标是确认服务进程和监听端口都起来。
+![Daemon 启动失败](/images/opi-ai-studio-ubuntu/mindie-service-start-error-missing-libtorch.png)
 
-### 5) 启动 chatbot 并做端到端验证
-
-另开一个终端安装依赖：
+这类报错通常说明运行时环境变量还没补齐。先尝试激活下面这些环境：
 
 ```bash
-sudo apt install -y python3-pip
-pip3 install -r requirements.txt -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
+# 配置CANN环境，默认安装在/usr/local目录下
+source /usr/local/Ascend/ascend-tookit/set_env.sh
+# 配置加速库环境
+source /usr/local/Ascend/nnal/atb/set_env.sh
+# 配置模型仓环境变量
+source /usr/local/Ascend/atb-models/set_env.sh
+source /usr/local/Ascend/mindie/atb/set_env.sh
 ```
 
-进入项目目录并启动：
+再次启动后，若看到 `Daemon start success!`，说明服务已经正常拉起：
+
+![Daemon 启动成功](/images/opi-ai-studio-ubuntu/mindie-service-start-success.png)
+
+可能出现运存不足时，尝试增加交换分区：
 
 ```bash
-cd chat_robot/
-python3 main.py
+sudo fallocate -l 64G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
 ```
 
-通过终端给出的本地地址访问界面，建议按以下顺序验收：
+![创建 swap 内存](/images/opi-ai-studio-ubuntu/create-swap-file.png)
 
-1. 页面可正常打开，基础静态资源无 404。
-2. 发送短问题（如“你好”）可收到稳定返回。
-3. 发送稍长问题时，服务端无异常退出。
-4. 推理期间 `npu-smi info` 有对应负载变化。
+在运行结束时可以关闭交换分区：
 
-### 6) 待实操阶段建议补充记录
+```bash
+sudo swapoff /swapfile
+sudo rm /swapfile
+```
 
-为了后续写复盘文档，建议每次实操按这个模板记录：
+### 5) 使用 curl 验证 HTTP 接口
 
-1. 执行时间与版本信息（系统、驱动、固件、镜像标签）。
-2. 执行命令与原始输出（成功与失败都保留）。
-3. 问题现象、定位过程、最终修复动作。
-4. 可复现实验最小步骤（方便后续重跑）。
+MindIE 服务启动后，可以直接用 `curl` 调用 `generate` 接口做快速验证：
 
-## 九、本次阶段结论
+```bash
+curl -w "\ntime_total=%{time_total}\n" \
+    -H "Accept: application/json" \
+    -H "Content-type: application/json" \
+    -X POST -d '{"inputs":"Who are you?","stream":false}' \
+    http://127.0.0.1:1025/generate
+```
 
-当前已完成：
+示例结果如下：
 
-1. Ubuntu 22.04 + Linux 5.15 内核切换。
-2. PCIe 设备识别确认。
-3. 310P 驱动安装与 `npu-smi info` 验证。
-4. Docker 与 MindIE 镜像拉取、容器启动脚本整理。
-5. 模型下载流程打通。
+![curl 推理 1](/images/opi-ai-studio-ubuntu/curl-generate-1.png)
 
-下一步重点是把第八节的推理链路完整跑通，并补齐服务侧截图与日志记录。
+![curl 推理 2](/images/opi-ai-studio-ubuntu/curl-generate-2.png)
+
+![curl 推理 3](/images/opi-ai-studio-ubuntu/curl-generate-3.png)
+
+![curl 推理 4](/images/opi-ai-studio-ubuntu/curl-generate-4.png)
+
+完成了最终接口部署的验证，至此整个 OPi AI Studio 在 Ubuntu 环境下的部署流程就算是完整走通了。
+
+接下来将在此基础之上，进一步调试上下文长度、并发性能等参数，并且换上精度更高的模型进行调试，以实现更快、质量更高的推理能力，尽可能地释放OPi AI Studio的潜力。
+
+同时，在这个基础上通过调用本地模型接口的方式，部署ChatBot，并且开始养龙虾(OpenClaw / Hermes Agent)！

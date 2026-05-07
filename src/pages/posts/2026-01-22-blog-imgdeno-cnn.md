@@ -12,6 +12,8 @@ tags:
 date: 2026-01-22
 ---
 
+# 基于卷积神经网络的图像降噪方法研究(Image Denoising Based on Convolutional Neural Networks)
+
 ## 1. Background
 
  > 为什么会想到做这样一个实验尝试？

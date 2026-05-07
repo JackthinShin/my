@@ -14,7 +14,7 @@ tags:
 
 # OPi AI Studio 配置记录 - Windows（驱动+CANN+llama.cpp）
 
-这篇文章记录我在 Windows 环境下配置 OPi AI Studio 的完整流程，包括测试模式设置、驱动安装、CANN 环境变量配置，以及用 `llama-cli.exe` 进行大模型推理。
+这篇文章记录在 Windows 环境下配置 OPi AI Studio 的完整流程，包括测试模式设置、驱动安装、CANN 环境变量配置，以及用 `llama-cli.exe` 进行大模型推理。
 
 ## 一、环境与准备
 
@@ -203,4 +203,4 @@ GGML_CANN_WEIGHT_NZ = 1
 
 但由于前面提到的 `fsync fail` 报错问题，推理输出的可视性会受到影响，结果显示常常断断续续，不够稳定直观。
 
-因此，后续我会改用 Ubuntu 环境重新配置，并继续验证推理链路的稳定性与输出效果。
+因此，后续将改用 Ubuntu 环境重新配置，并继续验证推理链路的稳定性与输出效果。

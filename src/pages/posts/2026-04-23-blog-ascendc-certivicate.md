@@ -11,6 +11,8 @@ tags:
   - Sigmoid
 ---
 
+# Ascend C算子开发能力认证（中级）：Sigmoid算子实现
+
 > **参考资料（用于学习与核对）**
 > 
 > [Ascend C算子开发能力认证（中级）Sigmoid算子的实现（外部参考）](https://blog.csdn.net/Maxwell_Newton/article/details/149690331)

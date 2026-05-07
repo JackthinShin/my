@@ -103,13 +103,6 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/posts/2026-03-31-note-move-constructor': RouteRecordInfo<
-      '/posts/2026-03-31-note-move-constructor',
-      '/posts/2026-03-31-note-move-constructor',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
     '/posts/2026-04-08-blog-unitree-go2-devlog-1': RouteRecordInfo<
       '/posts/2026-04-08-blog-unitree-go2-devlog-1',
       '/posts/2026-04-08-blog-unitree-go2-devlog-1',
@@ -131,16 +124,23 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/posts/2026-05-01-blog-opi-ai-studio-ubuntu': RouteRecordInfo<
-      '/posts/2026-05-01-blog-opi-ai-studio-ubuntu',
-      '/posts/2026-05-01-blog-opi-ai-studio-ubuntu',
+    '/posts/2026-05-02-blog-win-ubuntu-dual-boot-no-usb': RouteRecordInfo<
+      '/posts/2026-05-02-blog-win-ubuntu-dual-boot-no-usb',
+      '/posts/2026-05-02-blog-win-ubuntu-dual-boot-no-usb',
       Record<never, never>,
       Record<never, never>,
       | never
     >,
-    '/posts/2026-05-02-blog-win-ubuntu-dual-boot-no-usb': RouteRecordInfo<
-      '/posts/2026-05-02-blog-win-ubuntu-dual-boot-no-usb',
-      '/posts/2026-05-02-blog-win-ubuntu-dual-boot-no-usb',
+    '/posts/2026-05-07-blog-opi-ai-studio-ubuntu': RouteRecordInfo<
+      '/posts/2026-05-07-blog-opi-ai-studio-ubuntu',
+      '/posts/2026-05-07-blog-opi-ai-studio-ubuntu',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/posts/26math': RouteRecordInfo<
+      '/posts/26math',
+      '/posts/26math',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -231,12 +231,6 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
-    'src/pages/posts/2026-03-31-note-move-constructor.md': {
-      routes:
-        | '/posts/2026-03-31-note-move-constructor'
-      views:
-        | never
-    }
     'src/pages/posts/2026-04-08-blog-unitree-go2-devlog-1.md': {
       routes:
         | '/posts/2026-04-08-blog-unitree-go2-devlog-1'
@@ -255,15 +249,21 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
-    'src/pages/posts/2026-05-01-blog-opi-ai-studio-ubuntu.md': {
-      routes:
-        | '/posts/2026-05-01-blog-opi-ai-studio-ubuntu'
-      views:
-        | never
-    }
     'src/pages/posts/2026-05-02-blog-win-ubuntu-dual-boot-no-usb.md': {
       routes:
         | '/posts/2026-05-02-blog-win-ubuntu-dual-boot-no-usb'
+      views:
+        | never
+    }
+    'src/pages/posts/2026-05-07-blog-opi-ai-studio-ubuntu.md': {
+      routes:
+        | '/posts/2026-05-07-blog-opi-ai-studio-ubuntu'
+      views:
+        | never
+    }
+    'src/pages/posts/26math.md': {
+      routes:
+        | '/posts/26math'
       views:
         | never
     }
