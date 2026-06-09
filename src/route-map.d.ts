@@ -138,9 +138,16 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/posts/26math': RouteRecordInfo<
-      '/posts/26math',
-      '/posts/26math',
+    '/posts/2026-05-08-math-I-midterm-mistakes': RouteRecordInfo<
+      '/posts/2026-05-08-math-I-midterm-mistakes',
+      '/posts/2026-05-08-math-I-midterm-mistakes',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/posts/2026-06-09-blog-jetrover-ros2-slam-nav2': RouteRecordInfo<
+      '/posts/2026-06-09-blog-jetrover-ros2-slam-nav2',
+      '/posts/2026-06-09-blog-jetrover-ros2-slam-nav2',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -261,9 +268,15 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
-    'src/pages/posts/26math.md': {
+    'src/pages/posts/2026-05-08-math-I-midterm-mistakes.md': {
       routes:
-        | '/posts/26math'
+        | '/posts/2026-05-08-math-I-midterm-mistakes'
+      views:
+        | never
+    }
+    'src/pages/posts/2026-06-09-blog-jetrover-ros2-slam-nav2.md': {
+      routes:
+        | '/posts/2026-06-09-blog-jetrover-ros2-slam-nav2'
       views:
         | never
     }
