@@ -1,3 +1,8 @@
+/* ============================================
+   Markdown Content Styles
+   ============================================ */
+
+/* ---- Base ---- */
 .prose pre:not(.shiki) {
   padding: 0;
 }
@@ -12,6 +17,14 @@
 
 .prose p {
   margin: 0.9em 0;
+}
+
+/* ---- Headings ---- */
+.prose h1 {
+  margin: 2rem 0 1rem;
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 .prose h2 {
@@ -34,6 +47,14 @@
   color: #0f172a;
 }
 
+.prose h4 {
+  margin: 1.2rem 0 0.6rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+/* ---- Lists ---- */
 .prose ol,
 .prose ul {
   padding-left: 1.35rem;
@@ -44,6 +65,7 @@
   margin: 0.35rem 0;
 }
 
+/* ---- Custom boxes ---- */
 .prose .note-box,
 .prose .answer-box {
   margin: 1rem 0;
@@ -64,63 +86,136 @@
   font-weight: 600;
 }
 
-.prose .shiki {
-  font-family: 'DM Mono', monospace;
-  font-size: 1.2em;
-  line-height: 1.4;
-  padding: 1rem;
-  border-radius: 8px;
-  border: 1px solid #e6e9ef;
+/* ---- Blockquote ---- */
+.prose blockquote {
+  margin: 1rem 0;
+  padding: 0.6rem 1rem;
+  border-left: 4px solid #d1d5db;
+  color: #6b7280;
+  background: #f9fafb;
+  border-radius: 0 0.5rem 0.5rem 0;
 }
 
+.prose blockquote p {
+  margin: 0.4em 0;
+}
+
+/* ---- Inline code ---- */
+.prose code:not(.shiki code) {
+  padding: 0.15em 0.4em;
+  border-radius: 0.35rem;
+  background: #f1f5f9;
+  color: #be3b5c;
+  font-family: 'DM Mono', 'Fira Code', monospace;
+  font-size: 0.88em;
+  font-weight: 500;
+  border: 1px solid #e2e8f0;
+}
+
+/* ---- Tables ---- */
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.92rem;
+  border-radius: 0.6rem;
+  overflow: hidden;
+  table-layout: auto;
+}
+
+.prose thead {
+  background: #f1f5f9;
+}
+
+.prose thead th {
+  padding: 0.6rem 0.85rem;
+  text-align: left;
+  font-weight: 700;
+  color: #334155;
+  border-bottom: 2px solid #cbd5e1;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.prose tbody td {
+  padding: 0.5rem 0.85rem;
+  border-bottom: 1px solid #f1f5f9;
+  color: #374151;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+  vertical-align: top;
+}
+
+.prose tbody tr:nth-child(even) {
+  background: #f8fafc;
+}
+
+.prose tbody tr:hover {
+  background: #eef2ff;
+}
+
+/* ---- Horizontal rule ---- */
+.prose hr {
+  margin: 2rem 0;
+  border: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #cbd5e1, transparent);
+}
+
+/* ---- Images ---- */
 .prose img {
   width: 100%;
+  border-radius: 0.5rem;
 }
 
-/* 正文字色：亮/暗模式分别覆盖，保证暗色模式下可读 */
+/* ---- Text colors ---- */
 .prose {
   color: #374151; /* gray-700 */
 }
 
-html.dark .prose {
-  color: #d1d5db; /* slightly off-white for readability */
+/* ---- Code blocks (Shiki) ---- */
+.shiki {
+  font-family: 'DM Mono', 'Fira Code', monospace;
+  font-size: 0.95em;
+  line-height: 1.55;
+  padding: 1.15rem 1.2rem;
+  border-radius: 8px;
+  border: 1px solid #e6e9ef;
+  overflow-x: auto;
+  tab-size: 2;
+  background-color: #ffffff;
 }
 
-/* Increase readable line length on desktop: widen prose container */
+.shiki span {
+  background-color: transparent;
+}
+
+/* ---- Widen prose on desktop ---- */
 @media (min-width: 1024px) {
   .prose {
     max-width: 1100px;
   }
 }
 
-/* 代码块：外层负责背景，内层 token 只负责前景色（不携带背景），避免出现 token 方块 */
-.shiki {
-  background-color: #ffffff; /* light mode: white background */
+/* ============================================
+   Dark Mode
+   ============================================ */
+
+html.dark .prose {
+  color: #d1d5db;
 }
 
-.shiki span {
-  color: var(--shiki-light);
-  background-color: transparent;
-}
-
-html.dark .shiki {
-  background-color: var(--shiki-dark-bg);
-  border-color: #334155;
-}
-
-html.dark .shiki span {
-  color: var(--shiki-dark);
-  background-color: transparent;
-}
-
-/* 暗色模式下：增强标题、引用、链接等的前景色，保证可读性 */
+/* Dark headings */
 html.dark .prose h1,
 html.dark .prose h2,
 html.dark .prose h3,
 html.dark .prose h4,
 html.dark .prose h5,
 html.dark .prose h6 {
-  color: #f8fafc; /* near-white for headings */
+  color: #f8fafc;
 }
 
 html.dark .prose h2 {
@@ -133,6 +228,48 @@ html.dark .prose h3 {
   border-left-color: #14b8a6;
 }
 
+html.dark .prose h4 {
+  color: #e2e8f0;
+}
+
+/* Dark blockquote */
+html.dark .prose blockquote {
+  color: #d1d5db;
+  border-left-color: #475569;
+  background: #1e293b;
+}
+
+/* Dark inline code */
+html.dark .prose code:not(.shiki code) {
+  color: #fbbf82;
+  background: #1e293b;
+  border-color: #334155;
+}
+
+/* Dark tables */
+html.dark .prose thead {
+  background: #1e293b;
+}
+
+html.dark .prose thead th {
+  color: #e2e8f0;
+  border-bottom-color: #475569;
+}
+
+html.dark .prose tbody td {
+  color: #d1d5db;
+  border-bottom-color: #1e293b;
+}
+
+html.dark .prose tbody tr:nth-child(even) {
+  background: #0f172a;
+}
+
+html.dark .prose tbody tr:hover {
+  background: #1e293b;
+}
+
+/* Dark custom boxes */
 html.dark .prose .note-box,
 html.dark .prose .answer-box {
   border-color: #334155;
@@ -149,26 +286,41 @@ html.dark .prose .answer-box {
   border-color: #166534;
 }
 
+/* Dark links */
 html.dark .prose a {
-  color: #93c5fd; /* sky-400 for links in dark */
+  color: #93c5fd;
 }
 
-html.dark .prose blockquote {
-  color: #d1d5db; /* lighter text for blockquote */
-  border-left-color: #334155;
-}
-
+/* Dark list items */
 html.dark .prose li {
   color: #d1d5db;
 }
 
+/* Dark bold */
 html.dark .prose strong,
 html.dark .prose b {
   color: #f8fafc;
 }
 
-/* inline code in dark mode: make it slightly lighter and keep transparent background */
-html.dark .prose code {
-  color: #f1f5f9;
+/* Dark horizontal rule */
+html.dark .prose hr {
+  background: linear-gradient(90deg, transparent, #475569, transparent);
+}
+
+/* Dark code blocks: override Shiki's inline light-theme colors */
+html.dark .shiki {
+  background-color: #0d1117;
+  border-color: #30363d;
+}
+
+html.dark .shiki,
+html.dark .shiki code,
+html.dark .shiki span {
+  color: var(--shiki-dark) !important;
   background-color: transparent;
+}
+
+/* Ensure inline code inside code blocks inherits properly */
+html.dark .shiki code {
+  color: inherit;
 }

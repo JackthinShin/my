@@ -152,6 +152,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/posts/2026-06-11-blog-unitree-go2-patrol-mqtt': RouteRecordInfo<
+      '/posts/2026-06-11-blog-unitree-go2-patrol-mqtt',
+      '/posts/2026-06-11-blog-unitree-go2-patrol-mqtt',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/README': RouteRecordInfo<
       '/README',
       '/README',
@@ -277,6 +284,12 @@ declare module 'vue-router/auto-routes' {
     'src/pages/posts/2026-06-09-blog-jetrover-ros2-slam-nav2.md': {
       routes:
         | '/posts/2026-06-09-blog-jetrover-ros2-slam-nav2'
+      views:
+        | never
+    }
+    'src/pages/posts/2026-06-11-blog-unitree-go2-patrol-mqtt.md': {
+      routes:
+        | '/posts/2026-06-11-blog-unitree-go2-patrol-mqtt'
       views:
         | never
     }

@@ -94,10 +94,10 @@ export default defineConfig({
           },
         })
         md.use(await Shiki({
-          defaultColor: false,
+          defaultColor: 'light',
           themes: {
-            light: 'vitesse-light',
-            dark: 'vitesse-dark',
+            light: 'github-light-default',
+            dark: 'github-dark-default',
           },
         }))
       },
