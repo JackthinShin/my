@@ -1,0 +1,150 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PostCard from '@/components/PostCard.astro';
+import { getCollection } from 'astro:content';
+import { getAllTags } from '@/lib/utils';
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const sortedPosts = allPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const allTags = getAllTags(allPosts);
+---
+
+<BaseLayout title="Blog">
+  <div class="page-section">
+    <div class="content-area">
+      <h1 class="page-title">Blog</h1>
+      <p class="page-desc">Writing about CV, robotics, and things I'm learning.</p>
+
+      <!-- Tags filter -->
+      <details class="tags-filter">
+        <summary class="tags-summary">Filter by tags</summary>
+        <div class="tags-list" id="tagsList">
+          {allTags.map(tag => (
+            <button class="tag-btn" data-tag={tag}>{tag}</button>
+          ))}
+          <button class="tag-btn tag-clear" id="clearTags">Clear</button>
+        </div>
+      </details>
+
+      <!-- Search -->
+      <div class="search-wrapper">
+        <input type="text" class="search-input" id="searchInput" placeholder="Search articles..." />
+      </div>
+
+      <!-- Posts -->
+      <div class="post-list" id="postList">
+        {sortedPosts.map(post => (
+          <PostCard post={post} />
+        ))}
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  // Tag filtering
+  const tagButtons = document.querySelectorAll('.tag-btn[data-tag]');
+  const clearBtn = document.getElementById('clearTags');
+  const postCards = document.querySelectorAll('.post-card');
+
+  tagButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tag = btn.dataset.tag;
+      tagButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      postCards.forEach(card => {
+        const tags = card.querySelector('.post-card-tags');
+        if (tags && tags.textContent.includes(tag)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      tagButtons.forEach(b => b.classList.remove('active'));
+      postCards.forEach(card => card.style.display = 'block');
+    });
+  }
+
+  // Search
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', () => {
+      const q = searchInput.value.toLowerCase();
+      postCards.forEach(card => {
+        const title = card.querySelector('.post-card-title')?.textContent?.toLowerCase() || '';
+        const desc = card.querySelector('.post-card-desc')?.textContent?.toLowerCase() || '';
+        const tags = card.querySelector('.post-card-tags')?.textContent?.toLowerCase() || '';
+        if (title.includes(q) || desc.includes(q) || tags.includes(q)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  }
+</script>
+
+<style>
+  .page-title {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+    color: var(--color-ink);
+  }
+  .page-desc {
+    font-size: 0.9375rem;
+    color: var(--color-text-muted);
+    margin: 0 0 2rem;
+  }
+
+  .search-wrapper {
+    margin-bottom: 1.5rem;
+  }
+  .search-input {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    background: var(--color-surface);
+    color: var(--color-text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-input:focus { border-color: var(--color-accent); }
+
+  .tags-filter { margin-bottom: 1.5rem; }
+  .tags-summary {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    margin-bottom: 0.5rem;
+  }
+  .tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .tag-btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tag-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+  .tag-btn.active { background: var(--color-accent); color: #fff; border-color: var(--color-accent); }
+  .tag-clear { border-color: transparent; color: var(--color-text-muted); }
+
+  .post-list { display: flex; flex-direction: column; }
+</style>

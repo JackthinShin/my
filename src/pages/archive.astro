@@ -1,0 +1,95 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { formatDate } from '@/lib/utils';
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const sortedPosts = allPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+// Group by year
+const yearGroups: { year: number; posts: typeof sortedPosts }[] = [];
+for (const post of sortedPosts) {
+  const year = post.data.date.getFullYear();
+  const lastGroup = yearGroups[yearGroups.length - 1];
+  if (lastGroup?.year === year) {
+    lastGroup.posts.push(post);
+  } else {
+    yearGroups.push({ year, posts: [post] });
+  }
+}
+---
+
+<BaseLayout title="Archive">
+  <div class="page-section">
+    <div class="content-area">
+      <h1 class="page-title">Archive</h1>
+      <p class="page-desc">Everything I've written, organized by year. {sortedPosts.length} total articles.</p>
+
+      {yearGroups.map(group => (
+        <section class="year-group">
+          <h2 class="year-heading">{group.year}</h2>
+          <div class="year-posts">
+            {group.posts.map(post => (
+              <a href={`/blog/${post.id.replace(/\.md$/, '')}`} class="archive-item">
+                <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+                <span class="archive-title">{post.data.title}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-title {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-ink);
+    margin: 0 0 0.5rem;
+  }
+  .page-desc {
+    font-size: 0.9375rem;
+    color: var(--color-text-muted);
+    margin: 0 0 2.5rem;
+  }
+  .year-group { margin-bottom: 2.5rem; }
+  .year-heading {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-ink);
+    margin: 0 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .year-posts { display: flex; flex-direction: column; }
+  .archive-item {
+    display: flex;
+    gap: 1.5rem;
+    align-items: baseline;
+    padding: 0.6rem 0;
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-border);
+    transition: opacity 0.2s;
+  }
+  .archive-item:last-of-type { border-bottom: none; }
+  .archive-item:hover { opacity: 0.7; text-decoration: none; }
+  .archive-item time {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    flex-shrink: 0;
+    width: 80px;
+    font-variant-numeric: tabular-nums;
+  }
+  .archive-title {
+    font-size: 0.9375rem;
+    color: var(--color-text);
+  }
+  @media (max-width: 640px) {
+    .archive-item { flex-direction: column; gap: 0.2rem; }
+    .archive-item time { width: auto; }
+  }
+</style>

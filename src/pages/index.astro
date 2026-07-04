@@ -1,0 +1,180 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PostCard from '@/components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const sortedPosts = allPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const latestPosts = sortedPosts.slice(0, 4);
+---
+
+<BaseLayout title="Home">
+  <div class="page-section">
+    <div class="content-area">
+      <!-- Hero -->
+      <section class="hero">
+        <h1 class="hero-title">Jackthin</h1>
+        <p class="hero-subtitle">
+          CS student researching computer vision, SLAM,<br class="hide-mobile" />
+          and creative technology at Ocean University of China.
+        </p>
+        <p class="hero-now">
+          <span class="hero-label">Now</span>
+          Diving deep into Vision Transformers, building autonomous navigation systems for quadruped robots, and capturing the world through a lens.
+        </p>
+        <div class="hero-tags">
+          <span>Computer Vision</span>
+          <span>Image Processing</span>
+          <span>SLAM & Robotics</span>
+          <span>Photography</span>
+        </div>
+      </section>
+
+      <div class="divider"></div>
+
+      <!-- Latest Posts -->
+      <section>
+        <div class="section-header">
+          <h2 class="section-title">Latest Writing</h2>
+          <a href="/blog" class="section-link">View all →</a>
+        </div>
+        <div class="post-list">
+          {latestPosts.map(post => (
+            <PostCard post={post} />
+          ))}
+        </div>
+      </section>
+
+      <div class="divider"></div>
+
+      <!-- Quick Links -->
+      <section class="quick-links">
+        <a href="/projects" class="ql-item">
+          <span class="ql-title">Projects</span>
+          <span class="ql-desc">Things I've built and contributed to</span>
+        </a>
+        <a href="/archive" class="ql-item">
+          <span class="ql-title">Archive</span>
+          <span class="ql-desc">Everything I've written, in order</span>
+        </a>
+        <a href="/about" class="ql-item">
+          <span class="ql-title">About</span>
+          <span class="ql-desc">More about me and my work</span>
+        </a>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .hero { padding: 4rem 0 2rem; }
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: 3.5rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    color: var(--color-ink);
+    margin: 0 0 1rem;
+  }
+  .hero-subtitle {
+    font-size: 1.125rem;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    margin: 0 0 1.5rem;
+  }
+  .hero-now {
+    font-size: 0.875rem;
+    color: var(--color-text);
+    line-height: 1.7;
+    margin: 0 0 1rem;
+    padding: 1rem;
+    background: var(--color-bg-alt);
+    border-radius: 8px;
+    border-left: 3px solid var(--color-accent);
+  }
+  .hero-label {
+    font-weight: 600;
+    color: var(--color-accent);
+    margin-right: 0.25rem;
+  }
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .hero-tags span {
+    font-size: 0.8125rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--color-border);
+    margin: 2rem 0;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.5rem;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-ink);
+    margin: 0;
+  }
+  .section-link {
+    font-size: 0.875rem;
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+  .section-link:hover { text-decoration: underline; }
+
+  .post-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .quick-links {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+  .ql-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 1.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: border-color 0.2s;
+  }
+  .ql-item:hover {
+    border-color: var(--color-text-muted);
+    text-decoration: none;
+  }
+  .ql-title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+  .ql-desc {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+  }
+
+  @media (max-width: 640px) {
+    .hero-title { font-size: 2.5rem; }
+    .hide-mobile { display: none; }
+    .quick-links { grid-template-columns: 1fr; }
+  }
+</style>

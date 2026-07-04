@@ -1,0 +1,70 @@
+---
+import '@/styles/global.css';
+import '@fontsource/fraunces/400.css';
+import '@fontsource/fraunces/600.css';
+import '@fontsource/fraunces/700.css';
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
+import '@fontsource/jetbrains-mono/400.css';
+import '@fontsource/jetbrains-mono/500.css';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+}
+const { title, description, image } = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title} — Jackthin</title>
+    <meta name="description" content={description || "Jackthin 的个人网站 · CS 学生 · CV 研究员"} />
+    <meta property="og:title" content={`${title} — Jackthin`} />
+    <meta property="og:description" content={description || "Jackthin 的个人网站"} />
+    {image && <meta property="og:image" content={image} />}
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" type="application/rss+xml" title="Jackthin's Blog" href="/feed.xml" />
+  </head>
+  <body>
+    <div class="progress-bar" id="progressBar"></div>
+    <Header />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      // Dark mode initialization (prevent FOUC)
+      (function() {
+        const theme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
+    <script>
+      // Reading progress bar
+      window.addEventListener('scroll', () => {
+        const bar = document.getElementById('progressBar');
+        if (!bar) return;
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        bar.style.width = progress + '%';
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  main {
+    min-height: calc(100vh - 120px);
+  }
+</style>

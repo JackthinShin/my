@@ -1,0 +1,285 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* ---- Custom theme tokens ---- */
+@theme {
+  --font-display: "Fraunces", "Georgia", serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+  --color-bg: #fafaf8;
+  --color-bg-alt: #f0efea;
+  --color-text: #1a1a1a;
+  --color-text-muted: #99948b;
+  --color-accent: #2563eb;
+  --color-accent-warm: #c97b5d;
+  --color-border: #e3e2dd;
+  --color-code-bg: #f0efea;
+  --color-surface: #ffffff;
+  --color-paper: #fafaf8;
+  --color-ink: #1a1a1a;
+
+  /* Content widths */
+  --content-narrow: 65ch;
+  --content-wide: 720px;
+  --page-max: 1200px;
+}
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@variant dark {
+  --color-bg: #161615;
+  --color-bg-alt: #222220;
+  --color-text: #e9e8e4;
+  --color-text-muted: #8c8a86;
+  --color-accent: #7eb8f7;
+  --color-accent-warm: #d97757;
+  --color-border: #333230;
+  --color-code-bg: #262624;
+  --color-surface: #1c1c1a;
+  --color-paper: #161615;
+  --color-ink: #e9e8e4;
+}
+
+/* ===== Base reset ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-text);
+  background: var(--color-bg);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+::selection {
+  background: #d6e4f0;
+  color: #1a1a1a;
+}
+
+[data-theme="dark"] ::selection {
+  background: #1e3a5f;
+  color: #e9e8e4;
+}
+
+/* ===== Typography ===== */
+h1, h2, h3, h4 {
+  font-family: "Fraunces", "Georgia", serif;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 1.875rem; margin-top: 2.5rem; margin-bottom: 1rem; }
+h3 { font-size: 1.5rem; margin-top: 2rem; margin-bottom: 0.75rem; }
+h4 { font-size: 1.25rem; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+
+p { margin-bottom: 1em; }
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover { text-decoration: underline; }
+
+/* Contextual link styles: override default accent blue where needed */
+.post-meta a,
+.post-tag,
+.toc-link {
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+.post-meta a:hover,
+.post-tag:hover,
+.toc-link:hover {
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.toc-link {
+  display: block;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  padding: 0.35rem 0 0.35rem 0.75rem;
+  border-left: 2px solid var(--color-border);
+  transition: color 0.15s, border-color 0.15s;
+}
+.toc-link.active {
+  color: var(--color-ink);
+  border-left-color: var(--color-ink);
+}
+.toc-level-3 {
+  padding-left: 1.5rem;
+  font-size: 0.75rem;
+}
+
+/* ===== Layout helpers ===== */
+.content-area {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.page-section {
+  padding: 4rem 0;
+}
+
+/* ===== Prose / Markdown content ===== */
+.prose {
+  --tw-prose-body: var(--color-text);
+  --tw-prose-headings: var(--color-ink);
+  --tw-prose-links: var(--color-accent);
+  --tw-prose-bold: var(--color-ink);
+  --tw-prose-counters: var(--color-text-muted);
+  --tw-prose-bullets: var(--color-text-muted);
+  --tw-prose-code: var(--color-text);
+  --tw-prose-pre-bg: var(--color-code-bg);
+  --tw-prose-quotes: var(--color-text-muted);
+  --tw-prose-quote-borders: var(--color-border);
+  --tw-prose-hr: var(--color-border);
+  max-width: none;
+  font-size: 0.9375rem;
+  line-height: 1.8;
+}
+
+.prose img {
+  border-radius: 8px;
+  margin: 1.5rem 0;
+}
+
+.prose pre {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  position: relative;
+  padding-top: 2.5rem;
+}
+
+.prose pre::before {
+  content: attr(data-language);
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.7rem;
+  font-family: "Inter", system-ui, sans-serif;
+  color: var(--color-text-muted);
+  background: var(--color-border);
+  border-radius: 8px 0 8px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.prose pre .copy-btn {
+  position: absolute;
+  top: 0.3rem;
+  right: 0.5rem;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-family: "Inter", system-ui, sans-serif;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.prose pre .copy-btn:hover {
+  color: var(--color-ink);
+  border-color: var(--color-text-muted);
+}
+
+.prose code {
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  font-size: 0.85em;
+  font-weight: 500;
+}
+
+.prose blockquote {
+  font-style: italic;
+  border-left-width: 3px;
+}
+
+.prose table {
+  font-size: 0.875rem;
+  border-collapse: collapse;
+  display: block;
+  overflow-x: auto;
+  white-space: normal;
+}
+
+.prose thead th,
+.prose tbody td {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  vertical-align: top;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+.prose thead th {
+  background: var(--color-bg-alt);
+  font-weight: 600;
+  text-align: left;
+}
+
+.prose tbody td:first-child {
+  white-space: nowrap;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  font-size: 0.8rem;
+}
+
+.prose tbody td code {
+  word-break: break-all;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+.prose :where(code):not(:where([class~=not-prose] *))::before,
+.prose :where(code):not(:where([class~=not-prose] *))::after {
+  content: "";
+}
+
+/* ===== Progress bar ===== */
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: var(--color-accent);
+  z-index: 999;
+  transition: width 0.1s ease;
+}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+
+/* ===== Responsive ===== */
+@media (max-width: 640px) {
+  h1 { font-size: 1.875rem; }
+  h2 { font-size: 1.5rem; }
+  .content-area { padding: 0 1.25rem; }
+  .page-section { padding: 2.5rem 0; }
+}

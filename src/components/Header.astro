@@ -1,0 +1,148 @@
+---
+const path = Astro.url.pathname;
+---
+
+<header class="header">
+  <div class="header-inner">
+    <a href="/" class="logo">Jackthin</a>
+    <nav class="nav">
+      <a href="/" class="nav-link" data-current={path === '/' ? '' : undefined}>Home</a>
+      <a href="/blog" class="nav-link" data-current={path.startsWith('/blog') ? '' : undefined}>Blog</a>
+      <a href="/projects" class="nav-link" data-current={path.startsWith('/projects') ? '' : undefined}>Projects</a>
+      <a href="/archive" class="nav-link" data-current={path === '/archive' ? '' : undefined}>Archive</a>
+      <a href="/about" class="nav-link" data-current={path === '/about' ? '' : undefined}>About</a>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sun-icon"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="moon-icon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </nav>
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+</header>
+
+<script>
+  const toggle = document.getElementById('themeToggle');
+  if (toggle) {
+    toggle.addEventListener('click', () => {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    });
+  }
+
+  const menuBtn = document.getElementById('mobileMenuBtn');
+  const nav = document.querySelector('.nav');
+  if (menuBtn && nav) {
+    menuBtn.addEventListener('click', () => {
+      nav.classList.toggle('nav-open');
+    });
+  }
+</script>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+    backdrop-filter: blur(8px);
+    transition: background 0.3s;
+  }
+  .header-inner {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    height: 56px;
+  }
+  .logo {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-ink);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  .logo:hover { text-decoration: none; }
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .nav-link {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+    font-weight: 500;
+  }
+  .nav-link:hover { color: var(--color-ink); text-decoration: none; }
+  .nav-link[data-current] {
+    color: var(--color-ink);
+    position: relative;
+  }
+  .nav-link[data-current]::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 1.5px;
+    background: var(--color-accent);
+    border-radius: 1px;
+  }
+
+  .theme-toggle {
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 0.35rem;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .theme-toggle:hover {
+    color: var(--color-ink);
+    border-color: var(--color-text-muted);
+  }
+  .sun-icon { display: block; }
+  .moon-icon { display: none; }
+  [data-theme="dark"] .sun-icon { display: none; }
+  [data-theme="dark"] .moon-icon { display: block; }
+
+  .mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    padding: 0.25rem;
+  }
+
+  @media (max-width: 640px) {
+    .mobile-menu-btn { display: block; }
+    .nav {
+      position: fixed;
+      top: 56px;
+      left: 0;
+      right: 0;
+      background: var(--color-bg);
+      border-bottom: 1px solid var(--color-border);
+      flex-direction: column;
+      padding: 1rem 1.5rem;
+      gap: 1rem;
+      display: none;
+    }
+    .nav.nav-open { display: flex; }
+  }
+</style>

@@ -1,0 +1,98 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Projects">
+  <div class="page-section">
+    <div class="content-area">
+      <h1 class="page-title">Projects</h1>
+      <p class="page-desc">Things I've built, contributed to, and am working on.</p>
+
+      <div class="projects-grid">
+        <a href="https://photoflife.site" target="_blank" rel="noopener" class="project-card">
+          <div class="project-title">Photoflife</div>
+          <div class="project-desc">Personal photography portfolio built with GitHub + Vercel, images hosted on Cloudinary.</div>
+          <span class="project-tag">Photography</span>
+        </a>
+
+        <div class="project-card">
+          <div class="project-title">CATLASS Operator Development</div>
+          <div class="project-desc">Huawei Ascend partner project: developing custom operators for the 910B NPU platform using Ascend C.</div>
+          <span class="project-tag">Research</span>
+        </div>
+
+        <div class="project-card">
+          <div class="project-title">Unitree Go2 Patrol System</div>
+          <div class="project-desc">Autonomous patrol system for quadruped robots using MQTT control, SLAM mapping, and ROS2 Nav2.</div>
+          <span class="project-tag">Robotics</span>
+        </div>
+
+        <div class="project-card">
+          <div class="project-title">Personal Blog</div>
+          <div class="project-desc">This website — built with Astro 5, Tailwind CSS 4, deployed on Vercel + Cloudflare. Lab Notebook design.</div>
+          <span class="project-tag">Frontend</span>
+        </div>
+
+        <a href="https://github.com/jackthinshin/Image-Denoising-CNN" target="_blank" rel="noopener" class="project-card">
+          <div class="project-title">Image Denoising CNN</div>
+          <div class="project-desc">Research project exploring convolutional neural networks for image denoising.</div>
+          <span class="project-tag">CV</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-title {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-ink);
+    margin: 0 0 0.5rem;
+  }
+  .page-desc {
+    font-size: 0.9375rem;
+    color: var(--color-text-muted);
+    margin: 0 0 2.5rem;
+  }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .project-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: border-color 0.2s;
+  }
+  .project-card:hover { border-color: var(--color-text-muted); text-decoration: none; }
+  .project-title {
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+  .project-desc {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    flex: 1;
+  }
+  .project-tag {
+    font-size: 0.75rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    background: var(--color-bg-alt);
+    color: var(--color-text-muted);
+    align-self: flex-start;
+  }
+  @media (max-width: 640px) {
+    .projects-grid { grid-template-columns: 1fr; }
+  }
+</style>
