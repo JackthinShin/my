@@ -1,5 +1,6 @@
 ---
 import BlogPostLayout from '@/layouts/BlogPostLayout.astro';
+import TocZoom from '@/components/TocZoom.astro';
 import { getCollection } from 'astro:content';
 import { formatDate, getReadingTime } from '@/lib/utils';
 
@@ -114,11 +115,15 @@ const relatedPosts = sorted
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       <span>Contents</span>
     </button>
+    <button class="toc-zoom-btn" id="tocZoomBtn" aria-label="View all headings" title="View all headings (⌘K)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+    </button>
     <aside class="post-toc" id="postSidebar">
       <div class="toc-inner" id="tocContainer">
         <nav class="toc" id="toc"></nav>
       </div>
     </aside>
+    <TocZoom />
   </div>
 </BlogPostLayout>
 
@@ -168,20 +173,22 @@ const relatedPosts = sorted
     // Mobile toggle
     const toggleBtn = document.getElementById('tocToggle');
     const sidebar = document.getElementById('postSidebar');
+    const zoomBtn = document.getElementById('tocZoomBtn');
     if (toggleBtn && sidebar) {
       toggleBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         sidebar.classList.toggle('toc-open');
       });
-      // Close on click outside
       document.addEventListener('click', (e) => {
         if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
           sidebar.classList.remove('toc-open');
         }
       });
-      // Close on link click
-      toc.addEventListener('click', () => {
-        sidebar.classList.remove('toc-open');
+      toc.addEventListener('click', () => { sidebar.classList.remove('toc-open'); });
+    }
+    if (zoomBtn) {
+      zoomBtn.addEventListener('click', () => {
+        if (window.__openTocZoom) window.__openTocZoom();
       });
     }
   })();
@@ -302,7 +309,29 @@ const relatedPosts = sorted
     box-shadow: 0 2px 12px rgba(0,0,0,0.1);
   }
 
+  .toc-zoom-btn {
+    display: none;
+    position: fixed;
+    bottom: 1.5rem;
+    right: 6rem;
+    z-index: 50;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 0.5rem;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    transition: color 0.2s, border-color 0.2s, box-shadow 0.2s;
+  }
+  .toc-zoom-btn:hover {
+    color: var(--color-ink);
+    border-color: var(--color-text-muted);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  }
+
   @media (max-width: 860px) {
+    .toc-zoom-btn { display: block; }
     .post-toc {
       display: none;
       position: fixed;

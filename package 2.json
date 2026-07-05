@@ -9,11 +9,10 @@
     "build": "astro build",
     "preview": "astro preview",
     "build:search": "pagefind --site dist",
-    "postbuild": "npm run build:search"
+    "postbuild": "pnpm build:search"
   },
   "dependencies": {
-    "@rolldown/binding-linux-arm64-gnu": "^1.1.4",
-    "astro": "^5.18.2"
+    "astro": "^7.0.6"
   },
   "devDependencies": {
     "@astrojs/rss": "^4.0.19",
@@ -26,11 +25,5 @@
     "pagefind": "^1.5.2",
     "tailwindcss": "^4.3.2",
     "typescript": "^5.9.3"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "sharp"
-    ]
   }
 }
