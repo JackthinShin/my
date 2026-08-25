@@ -12,7 +12,6 @@
     "postbuild": "npm run build:search"
   },
   "dependencies": {
-    "@rolldown/binding-linux-arm64-gnu": "^1.1.4",
     "astro": "^5.18.2"
   },
   "devDependencies": {
