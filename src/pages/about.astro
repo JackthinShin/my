@@ -8,6 +8,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
       <h1 class="page-title">About</h1>
 
       <section class="about-intro">
+        <img src="/images/avatar.jpg" alt="Jackthin 的头像" width="512" height="512" class="about-avatar" />
         <p>
           你好，我是 <strong>Jackthin</strong>（施家鑫），就读于中国海洋大学计算机科学与技术专业，2025 级，目前大二。
           现在在中国海洋大学视觉实验室（OUC CVLab）参与科研学习。
@@ -59,6 +60,14 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
     font-weight: 700;
     color: var(--color-ink);
     margin: 0 0 2rem;
+  }
+  .about-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 0 1.5rem;
+    border: 3px solid var(--color-border);
   }
   .about-intro p {
     font-size: 1rem;
