@@ -3,7 +3,7 @@ title: "OPi AI Studio 配置记录 - Windows（驱动+CANN+llama.cpp）"
 date: 2026-04-29
 draft: false
 tags:
-  - OPi AI Studio
+  - opi-ai-studio
   - Windows
   - Ascend
   - CANN

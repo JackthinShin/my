@@ -30,9 +30,14 @@ const latestPosts = sortedPosts.slice(0, 4);
           <span>Drones & Ocean</span>
           <span>Photography</span>
         </div>
-        <a href="/series/go2" class="hero-series-link">
-          Unitree Go2 系列<span class="hero-series-arrow">→</span>
-        </a>
+        <div class="hero-series-links">
+          <a href="/series/go2" class="hero-series-link">
+            Unitree Go2 系列<span class="hero-series-arrow">→</span>
+          </a>
+          <a href="/series/opi-ai-studio" class="hero-series-link">
+            OPi AI Studio 系列<span class="hero-series-arrow">→</span>
+          </a>
+        </div>
       </section>
 
       <div class="divider"></div>
@@ -123,11 +128,17 @@ const latestPosts = sortedPosts.slice(0, 4);
     border: 1px solid var(--color-border);
     color: var(--color-text-muted);
   }
+  .hero-series-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+  }
   .hero-series-link {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    margin-top: 1.5rem;
     font-size: 0.875rem;
     font-weight: 600;
     color: var(--color-accent);

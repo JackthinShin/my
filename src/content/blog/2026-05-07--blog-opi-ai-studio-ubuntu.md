@@ -3,7 +3,7 @@ title: "OPi AI Studio 配置记录 - Ubuntu（310P 驱动 + MindIE + Daemon + cu
 date: 2026-05-07
 draft: false
 tags:
-  - OPi AI Studio
+  - opi-ai-studio
   - Ubuntu
   - Ascend
   - MindIE

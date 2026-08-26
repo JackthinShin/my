@@ -3,6 +3,7 @@ title: "Windows 环境下无 U 盘安装 Ubuntu 双系统教程"
 date: 2026-05-02
 draft: false
 tags:
+  - opi-ai-studio
   - Windows
   - Ubuntu
   - 双系统

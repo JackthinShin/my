@@ -23,6 +23,12 @@ const nextPost = currentIdx > 0 ? sorted[currentIdx - 1] : null;
 
 const readingTime = getReadingTime(post.body || '');
 
+const seriesMap = {
+  'unitree-go2': { href: '/series/go2', label: 'Unitree Go2 系列' },
+  'opi-ai-studio': { href: '/series/opi-ai-studio', label: 'OPi AI Studio 系列' },
+} as Record<string, { href: string; label: string }>;
+const series = post.data.tags?.map((t) => seriesMap[t]).find(Boolean);
+
 // Related posts: same tags
 const relatedPosts = sorted
   .filter(p => p.id !== post.id)
@@ -71,10 +77,10 @@ const relatedPosts = sorted
   <div class="post-wrapper">
     <article class="post-article">
       <header class="post-header">
-        {post.data.tags?.includes('unitree-go2') && (
-          <a href="/series/go2" class="series-link">
+        {series && (
+          <a href={series.href} class="series-link">
             <span class="series-dot"></span>
-            Unitree Go2 系列
+            {series.label}
           </a>
         )}
         <h1 class="post-title">{post.data.title}</h1>
