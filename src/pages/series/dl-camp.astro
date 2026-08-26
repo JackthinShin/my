@@ -1,0 +1,74 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PostCard from '@/components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const SERIES_TAG = '深度学习训练营';
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const seriesPosts = allPosts
+  .filter((p) => p.data.tags?.includes(SERIES_TAG))
+  .sort((a, b) => a.data.date.getTime() - b.data.date.getTime());
+---
+
+<BaseLayout title="25秋深度学习训练营系列">
+  <div class="page-section">
+    <div class="content-area">
+      <span class="series-badge">Series</span>
+      <h1 class="page-title">25秋深度学习训练营</h1>
+      <p class="page-desc">
+        逐周记录深度学习训练营的学习笔记——从<b>深度学习基础</b>、<b>卷积神经网络</b>，
+        到轻量级网络 <b>MobileNet / ShuffleNet</b>，用 PyTorch + Colab 一步步搭建实践。
+      </p>
+      {seriesPosts.length > 0 ? (
+        <div class="post-list">
+          {seriesPosts.map((post) => (
+            <PostCard post={post} />
+          ))}
+        </div>
+      ) : (
+        <p class="empty">系列里还没有文章。</p>
+      )}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .series-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-accent);
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: 9999px;
+    padding: 0.2rem 0.7rem;
+    margin-bottom: 1rem;
+  }
+  .page-title {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 0.75rem;
+    color: var(--color-ink);
+  }
+  .page-desc {
+    font-size: 0.9375rem;
+    color: var(--color-text-muted);
+    line-height: 1.7;
+    max-width: 65ch;
+    margin: 0 0 2rem;
+  }
+  .page-desc b {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+  .post-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .empty {
+    color: var(--color-text-muted);
+  }
+</style>
