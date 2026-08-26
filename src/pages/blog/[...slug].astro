@@ -26,7 +26,7 @@ const readingTime = getReadingTime(post.body || '');
 const seriesMap = {
   'unitree-go2': { href: '/series/go2', label: 'Unitree Go2 系列' },
   'opi-ai-studio': { href: '/series/opi-ai-studio', label: 'OPi AI Studio 系列' },
-  '深度学习训练营': { href: '/series/dl-camp', label: '25秋深度学习训练营' },
+  '深度学习训练营': { href: '/series/dl-camp', label: '深度学习训练营系列' },
 } as Record<string, { href: string; label: string }>;
 const series = post.data.tags?.map((t) => seriesMap[t]).find(Boolean);
 
