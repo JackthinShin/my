@@ -71,6 +71,12 @@ const relatedPosts = sorted
   <div class="post-wrapper">
     <article class="post-article">
       <header class="post-header">
+        {post.data.tags?.includes('unitree-go2') && (
+          <a href="/series/go2" class="series-link">
+            <span class="series-dot"></span>
+            Unitree Go2 系列
+          </a>
+        )}
         <h1 class="post-title">{post.data.title}</h1>
         <div class="post-meta">
           <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
@@ -229,6 +235,26 @@ const relatedPosts = sorted
   .post-header {
     max-width: 65ch;
     margin-bottom: 2.5rem;
+  }
+
+  .series-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-accent);
+    text-decoration: none;
+    margin-bottom: 0.75rem;
+  }
+  .series-link:hover { text-decoration: underline; }
+  .series-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent);
   }
 
   .post-title {

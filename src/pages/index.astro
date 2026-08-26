@@ -30,6 +30,9 @@ const latestPosts = sortedPosts.slice(0, 4);
           <span>Drones & Ocean</span>
           <span>Photography</span>
         </div>
+        <a href="/series/go2" class="hero-series-link">
+          Unitree Go2 系列<span class="hero-series-arrow">→</span>
+        </a>
       </section>
 
       <div class="divider"></div>
@@ -120,6 +123,27 @@ const latestPosts = sortedPosts.slice(0, 4);
     border: 1px solid var(--color-border);
     color: var(--color-text-muted);
   }
+  .hero-series-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    text-decoration: none;
+    border: 1px solid var(--color-accent);
+    border-radius: 9999px;
+    padding: 0.4rem 0.9rem;
+    transition: background 0.2s, color 0.2s;
+  }
+  .hero-series-link:hover {
+    background: var(--color-accent);
+    color: #fff;
+    text-decoration: none;
+  }
+  .hero-series-arrow { transition: transform 0.2s; }
+  .hero-series-link:hover .hero-series-arrow { transform: translateX(3px); }
 
   .divider {
     height: 1px;

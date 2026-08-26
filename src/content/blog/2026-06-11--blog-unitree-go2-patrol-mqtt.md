@@ -3,7 +3,7 @@ title: "宇树 GO2 巡检系统全记录 — MQTT 控制、网络配置、Patrol
 date: 2026-06-17
 draft: false
 tags:
-  - 宇树 GO2
+  - unitree-go2
   - MQTT
   - SLAM
   - MinIO
