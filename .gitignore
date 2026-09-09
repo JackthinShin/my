@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Astro
+.astro/
+
+# OS
+.DS_Store
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+
+# Flower (local config)
+.flower/
+
+# Logs
+*.log
+
+# Nested clone
+my/
+my/.pnpm-store/
+
+# Claude Code runs
+runs/

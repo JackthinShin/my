@@ -1,0 +1,75 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PostCard from '@/components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const SERIES_TAG = 'unitree-go2';
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const seriesPosts = allPosts
+  .filter((p) => p.data.tags?.includes(SERIES_TAG))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<BaseLayout title="Unitree Go2 系列">
+  <div class="page-section">
+    <div class="content-area">
+      <span class="series-badge">Series</span>
+      <h1 class="page-title">Unitree Go2 系列</h1>
+      <p class="page-desc">
+        从<b>开发日志</b>、<b>巡检系统</b>，到一步步走通<b>机械臂识别与抓取</b>的全过程——
+        SLAM 导航、MoveIt2 控制、YOLO + D435i 三维定位、ArUco 关节方向标定，
+        以及最后“为什么还没把物体抓起来”的复盘。
+      </p>
+      {seriesPosts.length > 0 ? (
+        <div class="post-list">
+          {seriesPosts.map((post) => (
+            <PostCard post={post} />
+          ))}
+        </div>
+      ) : (
+        <p class="empty">系列里还没有文章。</p>
+      )}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .series-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-accent);
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: 9999px;
+    padding: 0.2rem 0.7rem;
+    margin-bottom: 1rem;
+  }
+  .page-title {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 0.75rem;
+    color: var(--color-ink);
+  }
+  .page-desc {
+    font-size: 0.9375rem;
+    color: var(--color-text-muted);
+    line-height: 1.7;
+    max-width: 65ch;
+    margin: 0 0 2rem;
+  }
+  .page-desc b {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+  .post-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .empty {
+    color: var(--color-text-muted);
+  }
+</style>

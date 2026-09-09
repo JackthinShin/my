@@ -1,0 +1,731 @@
+---
+import BlogPostLayout from '@/layouts/BlogPostLayout.astro';
+import { getCollection } from 'astro:content';
+import { formatDate, getReadingTime } from '@/lib/utils';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map(post => ({
+    params: { slug: post.id.replace(/\.md$/, '') },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const sorted = allPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const currentIdx = sorted.findIndex(p => p.id === post.id);
+const prevPost = currentIdx < sorted.length - 1 ? sorted[currentIdx + 1] : null;
+const nextPost = currentIdx > 0 ? sorted[currentIdx - 1] : null;
+
+const readingTime = getReadingTime(post.body || '');
+
+const seriesMap = {
+  'unitree-go2': { href: '/series/go2', label: 'Unitree Go2 系列' },
+  'opi-ai-studio': { href: '/series/opi-ai-studio', label: 'OPi AI Studio 系列' },
+  '深度学习训练营': { href: '/series/dl-camp', label: '深度学习训练营系列' },
+} as Record<string, { href: string; label: string }>;
+const series = post.data.tags?.map((t) => seriesMap[t]).find(Boolean);
+const seriesTag = post.data.tags?.find((t) => t in seriesMap);
+const seriesPosts = seriesTag
+  ? allPosts
+      .filter(p => p.data.tags?.includes(seriesTag))
+      .sort((a, b) => a.data.date.getTime() - b.data.date.getTime())
+  : [];
+
+// Related posts: same tags
+const relatedPosts = sorted
+  .filter(p => p.id !== post.id)
+  .map(p => ({
+    post: p,
+    score: p.data.tags?.filter(t => post.data.tags?.includes(t)).length || 0,
+  }))
+  .filter(p => p.score > 0)
+  .sort((a, b) => b.score - a.score)
+  .slice(0, 3)
+  .map(p => p.post);
+---
+
+<BlogPostLayout>
+  <slot name="head">
+    <title>{post.data.title} — Jackthin</title>
+    <meta name="description" content={post.data.description || ''} />
+    <meta property="og:title" content={`${post.data.title} — Jackthin`} />
+    <meta property="og:description" content={post.data.description || ''} />
+  </slot>
+
+  <script>
+    // Code block enhancement
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.prose pre').forEach(pre => {
+        const code = pre.querySelector('code');
+        const lang = code?.getAttribute('data-language') || pre.getAttribute('data-language') || '';
+        if (lang) pre.setAttribute('data-language', lang);
+
+        const btn = document.createElement('button');
+        btn.className = 'copy-btn';
+        btn.textContent = 'Copy';
+        btn.addEventListener('click', async () => {
+          const text = code?.textContent || '';
+          try {
+            await navigator.clipboard.writeText(text);
+            btn.textContent = 'Copied!';
+            setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+          } catch { btn.textContent = 'Failed'; }
+        });
+        pre.appendChild(btn);
+      });
+    });
+  </script>
+
+  <div class="post-wrapper">
+    <article class="post-article">
+      <header class="post-header">
+        {series && (
+          <a href={series.href} class="series-link">
+            <span class="series-dot"></span>
+            {series.label}
+          </a>
+        )}
+        <h1 class="post-title">{post.data.title}</h1>
+        <div class="post-meta">
+          <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+          <span class="meta-sep">·</span>
+          <span>{readingTime} min read</span>
+          {post.data.tags.length > 0 && (
+            <span class="meta-sep">·</span>
+          )}
+          {post.data.tags.map((tag) => (
+            <a href={`/blog?tag=${tag}`} class="post-tag">#{tag}</a>
+          ))}
+        </div>
+      </header>
+
+      <button class="pagefind-search-btn" id="pagefindSearchBtn" aria-label="搜索文章">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <span>搜索</span>
+      </button>
+      <div class="pagefind-search-panel" id="pagefindSearchPanel">
+        <div class="pagefind-search-header">
+          <span class="pagefind-search-title">搜索文章</span>
+          <button class="pagefind-search-close" id="pagefindSearchClose">✕</button>
+        </div>
+        <div id="search"></div>
+      </div>
+
+      <div class="post-body prose" id="postBody">
+        <Content />
+      </div>
+
+      {seriesPosts.length > 1 && (
+        <div class="series-nav">
+          <h3 class="series-nav-title">系列：{series?.label || seriesTag}</h3>
+          <ol class="series-nav-list">
+            {seriesPosts.map((sp) => {
+              const isCurrent = sp.id === post.id;
+              return (
+                <li class={`series-nav-item${isCurrent ? ' current' : ''}`}>
+                  {isCurrent ? (
+                    <span class="series-nav-current">{sp.data.title}</span>
+                  ) : (
+                    <a href={`/blog/${sp.id.replace(/\.md$/, '')}`} class="series-nav-link">{sp.data.title}</a>
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+      )}
+
+      <nav class="post-nav">
+        {prevPost ? (
+          <a href={`/blog/${prevPost.id.replace(/\.md$/, '')}`} class="post-nav-link prev">
+            <span class="post-nav-arrow">←</span>
+            <div class="post-nav-text">
+              <span class="post-nav-label">Previous</span>
+              <span class="post-nav-title">{prevPost.data.title}</span>
+            </div>
+          </a>
+        ) : <div />}
+        {nextPost ? (
+          <a href={`/blog/${nextPost.id.replace(/\.md$/, '')}`} class="post-nav-link next">
+            <div class="post-nav-text">
+              <span class="post-nav-label">Next</span>
+              <span class="post-nav-title">{nextPost.data.title}</span>
+            </div>
+            <span class="post-nav-arrow">→</span>
+          </a>
+        ) : <div />}
+      </nav>
+
+      <div class="giscus-wrapper">
+        <script src="https://giscus.app/client.js"
+                data-repo="jackthinshin/jackthin-blog"
+                data-repo-id="REPO_ID_PLACEHOLDER"
+                data-category="Announcements"
+                data-category-id="CATEGORY_ID_PLACEHOLDER"
+                data-mapping="pathname"
+                data-strict="0"
+                data-reactions-enabled="1"
+                data-emit-metadata="0"
+                data-input-position="top"
+                data-theme="preferred_color_scheme"
+                data-lang="zh-CN"
+                data-loading="lazy"
+                crossorigin="anonymous"
+                async>
+        </script>
+      </div>
+    </article>
+
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+    </button>
+
+    <button class="toc-toggle" id="tocToggle" aria-label="Toggle table of contents">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      <span>目录</span>
+    </button>
+    <aside class="post-toc" id="postSidebar">
+      <div class="toc-inner" id="tocContainer">
+        <nav class="toc" id="toc"></nav>
+      </div>
+    </aside>
+  </div>
+</BlogPostLayout>
+
+<script>
+  // Build TOC from h2/h3 in post body
+  (function() {
+    const body = document.getElementById('postBody');
+    const toc = document.getElementById('toc');
+    const container = document.getElementById('tocContainer');
+    if (!body || !toc || !container) return;
+
+    const headings = body.querySelectorAll('h2, h3');
+    if (headings.length === 0) {
+      document.getElementById('postSidebar').style.display = 'none';
+      return;
+    }
+
+    const items = [];
+    headings.forEach((h, i) => {
+      const id = h.id || 'heading-' + i;
+      if (!h.id) h.id = id;
+      items.push({
+        id: id,
+        text: h.textContent,
+        level: h.tagName === 'H2' ? 2 : 3,
+      });
+    });
+
+    toc.innerHTML = items.map(item =>
+      `<a href="#${item.id}" class="toc-link toc-level-${item.level}" data-target="${item.id}">${item.text}</a>`
+    ).join('');
+
+    // Active heading tracking
+    const links = toc.querySelectorAll('.toc-link');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          links.forEach(l => l.classList.remove('active'));
+          const active = toc.querySelector(`[data-target="${entry.target.id}"]`);
+          if (active) active.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-80px 0px -70% 0px' });
+
+    headings.forEach(h => observer.observe(h));
+
+    // Mobile toggle
+    const toggleBtn = document.getElementById('tocToggle');
+    const sidebar = document.getElementById('postSidebar');
+    if (toggleBtn && sidebar) {
+      toggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        sidebar.classList.toggle('toc-open');
+      });
+      document.addEventListener('click', (e) => {
+        if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+          sidebar.classList.remove('toc-open');
+        }
+      });
+      toc.addEventListener('click', () => { sidebar.classList.remove('toc-open'); });
+    }
+  })();
+</script>
+
+<script>
+  // Image lightbox
+  document.addEventListener('DOMContentLoaded', () => {
+    const images = document.querySelectorAll('.prose img');
+    if (!images.length) return;
+
+    let overlay = null;
+
+    function closeLightbox() {
+      if (!overlay) return;
+      overlay.classList.remove('visible');
+      setTimeout(() => { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 250);
+      overlay = null;
+      document.body.style.overflow = '';
+    }
+
+    images.forEach(img => {
+      img.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (overlay) closeLightbox();
+
+        overlay = document.createElement('div');
+        overlay.className = 'lightbox-overlay';
+        overlay.innerHTML =
+          '<button class="lightbox-close" aria-label="Close">✕</button>' +
+          '<img class="lightbox-image" src="' + img.src + '" alt="' + (img.alt || '') + '" />';
+
+        document.body.appendChild(overlay);
+        document.body.style.overflow = 'hidden';
+        requestAnimationFrame(() => overlay.classList.add('visible'));
+
+        overlay.addEventListener('click', (ev) => {
+          if (ev.target === overlay || ev.target.classList.contains('lightbox-close')) {
+            closeLightbox();
+          }
+        });
+
+        document.addEventListener('keydown', function onEsc(ev) {
+          if (ev.key === 'Escape') {
+            closeLightbox();
+            document.removeEventListener('keydown', onEsc);
+          }
+        });
+      });
+    });
+  });
+</script>
+
+<script>
+  // Back to top
+  (function() {
+    const btn = document.getElementById('backToTop');
+    if (!btn) return;
+
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > window.innerHeight) {
+        btn.classList.add('visible');
+      } else {
+        btn.classList.remove('visible');
+      }
+    });
+
+    btn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  })();
+</script>
+
+<script>
+  // Article page Pagefind search
+  (function() {
+    const searchBtn = document.getElementById('pagefindSearchBtn');
+    const panel = document.getElementById('pagefindSearchPanel');
+    const closeBtn = document.getElementById('pagefindSearchClose');
+    if (!searchBtn || !panel || !closeBtn) return;
+
+    let uiLoaded = false;
+
+    function initPagefind() {
+      if (uiLoaded) return;
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = '/pagefind/pagefind-ui.css';
+      document.head.appendChild(link);
+
+      const script = document.createElement('script');
+      script.src = '/pagefind/pagefind-ui.js';
+      script.onload = () => {
+        if (window.PagefindUI) {
+          new PagefindUI({ element: '#search', showSubResults: true, showImages: false });
+          uiLoaded = true;
+        }
+      };
+      script.onerror = () => {
+        const msg = document.createElement('p');
+        msg.style.cssText = 'font-size:0.8125rem;color:var(--color-text-muted);padding:0.5rem 0;';
+        msg.textContent = '搜索功能在构建后可用。';
+        document.querySelector('#search')?.appendChild(msg);
+        uiLoaded = true;
+      };
+      document.body.appendChild(script);
+    }
+
+    searchBtn.addEventListener('click', () => {
+      panel.classList.add('open');
+      initPagefind();
+      document.body.style.overflow = 'hidden';
+    });
+
+    function closePanel() {
+      panel.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    closeBtn.addEventListener('click', closePanel);
+    panel.addEventListener('click', (e) => {
+      if (e.target === panel) closePanel();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && panel.classList.contains('open')) closePanel();
+    });
+  })();
+</script>
+
+<style>
+  .post-wrapper {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 3rem;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .post-toc {
+    position: sticky;
+    top: 80px;
+    flex-shrink: 0;
+    width: 180px;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+  }
+  .post-toc::-webkit-scrollbar { width: 3px; }
+  .post-toc::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 2px; }
+
+  .toc-inner {
+    /* container */
+  }
+
+  .post-article {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .post-header {
+    max-width: 65ch;
+    margin-bottom: 2.5rem;
+  }
+
+  .series-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-accent);
+    text-decoration: none;
+    margin-bottom: 0.75rem;
+  }
+  .series-link:hover { text-decoration: underline; }
+  .series-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent);
+  }
+
+  .post-title {
+    font-family: var(--font-display);
+    font-size: 2.2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+    margin: 0 0 0.75rem;
+  }
+
+  .post-meta {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.2rem;
+  }
+  .meta-sep { color: var(--color-border); margin: 0 0.15rem; }
+
+  .post-tag {
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .post-tag:hover { color: var(--color-ink); text-decoration: none; }
+
+  .post-body {
+    max-width: 65ch;
+  }
+
+  .post-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    max-width: 65ch;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border);
+  }
+  .post-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    text-decoration: none;
+    color: var(--color-text);
+    transition: opacity 0.2s;
+  }
+  .post-nav-link:hover { opacity: 0.6; text-decoration: none; }
+  .post-nav-link.next { justify-content: flex-end; text-align: right; }
+  .post-nav-arrow { color: var(--color-text-muted); flex-shrink: 0; }
+  .post-nav-text { display: flex; flex-direction: column; gap: 0.1rem; min-width: 0; }
+  .post-nav-label { font-size: 0.6875rem; color: var(--color-text-muted); }
+  .post-nav-title { font-size: 0.875rem; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; max-width: 100%; }
+
+  .toc-toggle {
+    display: none;
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 50;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    font-family: var(--font-body);
+    gap: 0.4rem;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    transition: color 0.2s, border-color 0.2s, box-shadow 0.2s;
+  }
+  .toc-toggle:hover {
+    color: var(--color-ink);
+    border-color: var(--color-text-muted);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  }
+
+  /* ===== Back to top ===== */
+  .back-to-top {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 50;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    transition: opacity 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .back-to-top.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .back-to-top:hover {
+    color: var(--color-ink);
+    border-color: var(--color-text-muted);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  }
+
+  /* ===== Series navigation ===== */
+  .series-nav {
+    max-width: 65ch;
+    margin-top: 2.5rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--color-bg-alt);
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+  }
+  .series-nav-title {
+    font-family: var(--font-display);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-ink);
+    margin: 0 0 0.75rem;
+  }
+  .series-nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    counter-reset: series-counter;
+  }
+  .series-nav-item {
+    counter-increment: series-counter;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    padding: 0.3rem 0;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+  .series-nav-item::before {
+    content: counter(series-counter) ".";
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    flex-shrink: 0;
+  }
+  .series-nav-link {
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .series-nav-link:hover {
+    text-decoration: underline;
+  }
+  .series-nav-current {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+  .series-nav-item.current::before {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+
+  /* ===== Giscus wrapper ===== */
+  .giscus-wrapper {
+    max-width: 65ch;
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  @media (max-width: 860px) {
+    .post-toc {
+      display: none;
+      position: fixed;
+      top: auto;
+      bottom: 4.5rem;
+      right: 1.5rem;
+      width: 240px;
+      max-height: 50vh;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 0.75rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      z-index: 50;
+      overflow-y: auto;
+    }
+    .post-toc.toc-open { display: block; }
+    .toc-toggle { display: inline-flex; }
+    .back-to-top { bottom: 5.5rem; }
+    .post-wrapper { padding: 2rem 1.25rem; }
+  }
+
+  @media (max-width: 640px) {
+    .post-title { font-size: 1.75rem; }
+    .post-nav { grid-template-columns: 1fr; }
+    .post-wrapper { padding: 1.5rem 1rem; }
+  }
+
+  /* Pagefind search button on article page */
+  .pagefind-search-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-bottom: 1.5rem;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .pagefind-search-btn:hover {
+    color: var(--color-ink);
+    border-color: var(--color-text-muted);
+  }
+
+  /* Search panel overlay */
+  .pagefind-search-panel {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(4px);
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 10vh;
+  }
+  .pagefind-search-panel.open { display: flex; }
+
+  .pagefind-search-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .pagefind-search-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+  }
+  .pagefind-search-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    font-size: 1rem;
+    padding: 0.25rem;
+    line-height: 1;
+    border-radius: 4px;
+    transition: color 0.2s;
+  }
+  .pagefind-search-close:hover { color: var(--color-ink); }
+
+  .pagefind-search-panel #search {
+    width: 90vw;
+    max-width: 640px;
+    max-height: 70vh;
+    overflow-y: auto;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+
+  /* Pagefind UI theme overrides inside the panel */
+  .pagefind-search-panel #search {
+    --pagefind-ui-scale: 0.85;
+    --pagefind-ui-primary: var(--color-accent);
+    --pagefind-ui-text: var(--color-text);
+    --pagefind-ui-background: var(--color-surface);
+    --pagefind-ui-border: var(--color-border);
+    --pagefind-ui-tag: var(--color-bg-alt);
+    --pagefind-ui-border-width: 1px;
+    --pagefind-ui-border-radius: 8px;
+    --pagefind-ui-font: var(--font-body, "Inter", system-ui, sans-serif);
+  }
+</style>

@@ -1,0 +1,44 @@
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-links">
+      <a href="https://github.com/jackthinshin" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://photoflife.site" target="_blank" rel="noopener">Photos</a>
+      <a href="mailto:jackthin@foxmail.com">Email</a>
+      <a href="/feed.xml">RSS</a>
+    </div>
+    <p class="footer-copy">
+      &copy; {new Date().getFullYear()} Jackthin. Built with Astro.
+    </p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--color-border);
+    padding: 2rem 1.5rem;
+    margin-top: 4rem;
+  }
+  .footer-inner {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .footer-links {
+    display: flex;
+    gap: 1.5rem;
+  }
+  .footer-links a {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--color-ink); text-decoration: none; }
+  .footer-copy {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+</style>
